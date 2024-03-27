@@ -53,8 +53,8 @@ export default function SignUpPage() {
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target;
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const { name, value } = event.target;
     setData(prevState => ({
       ...prevState,
       [name]: value
