@@ -1,4 +1,4 @@
-import { kavoon } from '@/app/ui/fonts';
+import { kavoon } from './ui/fonts';
 
 import styles from './Section2.module.css';
 export default function section2() {
