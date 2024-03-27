@@ -78,7 +78,7 @@ export default function SignUpPage() {
       setIsLoading(true); // Set loading state to true
 
       try {
-        const response = await axios.post('http://localhost:5000/api/user/signup', Data);
+        const response = await axios.post('https://project350-backend.vercel.app/api/user/signup', Data);
         console.log(response.status);
         if (response.status === 201) {
           // Assuming successful submission, navigate to login page

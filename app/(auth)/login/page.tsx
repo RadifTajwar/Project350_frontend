@@ -41,7 +41,7 @@ export default function page() {
     setIsLoading(true); // Set loading state to true
 
     try {
-      const response = await axios.post('http://localhost:5000/api/user/login', formData);
+      const response = await axios.post('https://project350-backend.vercel.app/api/user/login', formData);
       const userType=response.data.userType;
       if (response.status === 200) {
         setErrorMessage('');
