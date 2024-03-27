@@ -10,11 +10,22 @@ import facebook from '../../../public/Landing_Page_image/facebook.svg';
 import github from '../../../public/Landing_Page_image/github.svg';
 import google from '../../../public/Landing_Page_image/google.svg';
 import styles from './signup.module.css';
+
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  image: string | null;
+  userType: string;
+}
+
 export default function SignUpPage() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [Data, setData] = useState({
+
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [Data, setData] = useState<FormData>({
     name: '',
     email: '',
     password: '',
@@ -23,13 +34,17 @@ export default function SignUpPage() {
     userType: 'agent'
   });
 
-  const convertBase64 = (file) => {
+  const convertBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsDataURL(file);
 
       fileReader.onload = () => {
-        resolve(fileReader.result);
+        if (fileReader.result) {
+          resolve(fileReader.result.toString());
+        } else {
+          reject(new Error('Failed to convert file to base64'));
+        }
       };
 
       fileReader.onerror = (error) => {
@@ -38,25 +53,25 @@ export default function SignUpPage() {
     });
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     setData(prevState => ({
       ...prevState,
       [name]: value
     }));
-
   };
 
-  const handleImageChange = async (files) => {
-    const base64 = await convertBase64(files[0]);
-    setData({
-      ...Data,
-      image: base64
-    });
+  const handleImageChange = async (files: FileList | null): Promise<void> => {
+    if (files && files[0]) {
+      const base64 = await convertBase64(files[0]);
+      setData({
+        ...Data,
+        image: base64
+      });
+    }
   };
 
-
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
     if (Data.password === Data.confirmPassword) {
@@ -70,13 +85,9 @@ export default function SignUpPage() {
           router.push('/login');
         }
       } catch (error) {
-        if (error.response && error.response.status === 400) {
-          // Handle specific error case where email already exists
+        
           setErrorMessage('Email already exists');
-        } else {
-          // Handle other errors
-          console.error('Error submitting form:', error);
-        }
+        
       } finally {
         setIsLoading(false); // Set loading state back to false
       }
