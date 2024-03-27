@@ -73,16 +73,24 @@ export default function SignUpPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
-
+      
     if (Data.password === Data.confirmPassword) {
       setIsLoading(true); // Set loading state to true
 
       try {
-        const response = await axios.post('http://localhost:5000/api/user', Data);
+        const response = await axios.post('http://localhost:5000/api/user/signup', Data);
         console.log(response.status);
         if (response.status === 201) {
           // Assuming successful submission, navigate to login page
           router.push('/login');
+          setData({
+            name: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            image: null,
+            userType: 'agent'
+          })
         }
       } catch (error) {
         

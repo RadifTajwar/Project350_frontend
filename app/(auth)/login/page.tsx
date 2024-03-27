@@ -1,20 +1,71 @@
 "use client"
-import Image from 'next/image'
-import Link from 'next/link'
-import { useState } from 'react'
-import facebook from '../../../public/Landing_Page_image/facebook.svg'
-import github from '../../../public/Landing_Page_image/github.svg'
-import google from '../../../public/Landing_Page_image/google.svg'
-import hero_image from '../../../public/Landing_Page_image/hero.png'
-import styles from './login.module.css'
+import axios from 'axios'; // Import axios
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import facebook from '../../../public/Landing_Page_image/facebook.svg';
+import github from '../../../public/Landing_Page_image/github.svg';
+import google from '../../../public/Landing_Page_image/google.svg';
+import hero_image from '../../../public/Landing_Page_image/hero.png';
+import styles from './login.module.css';
+
+
 export default function page() {
+  interface FormData {
+    email: string;
+    password: string;
+  
+  }
+
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
+    password: ''
+
   });
 
- 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+
+    setIsLoading(true); // Set loading state to true
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/user/login', formData);
+      const userType=response.data.userType;
+      if (response.status === 200) {
+        setErrorMessage('');
+        if(userType=='agent'){
+          router.push('/home/agent');
+        }
+        else{
+          router.push('/home/company');
+        }
+        
+        // Assuming successful submission, navigate to login page
+        setFormData({
+          email: '',
+          password: ''
+
+        });
+      }
+    } catch (error) {
+      setErrorMessage('Invalid password or email ');
+      console.log("Error submitting form" +error);
+    } finally {
+      setIsLoading(false); // Set loading state back to false
+    }
+  };
 
   return (
     <>
@@ -29,7 +80,7 @@ export default function page() {
             <div className="form_texts py-10" style={{ width: '300px' }}>
               <h1 className="text-white font-inter text-3xl font-normal mb-3"
                 style={{ lineHeight: "normal" }}> Login</h1>
-              <form  className="w-full max-w-sm mx-auto ">
+              <form onSubmit={handleSubmit} className="w-full max-w-sm mx-auto ">
                 <div className="mb-4">
                   <p className="text-white font-inter text-sm font-semibold " style={{ lineHeight: "normal" }}>Email</p>
                   <input
@@ -37,7 +88,7 @@ export default function page() {
                     id="email"
                     name="email"
                     value={formData.email}
-                    
+                    onChange={handleChange}
                     className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
                     placeholder="enter your email"
                     required
@@ -50,19 +101,17 @@ export default function page() {
                     id="password"
                     name="password"
                     value={formData.password}
-                   
+                    onChange={handleChange}
                     className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
                     placeholder="enter your password"
                     required
                   />
                 </div>
-
-                <button
-                  type="submit"
-                  className={`${styles.sign_in_btn} btn mt-6 mb-2 w-[300px] h-[36.972px] rounded-[10px]  flex justify-center items-center text-white font-inter text-s font-bold`} style={{ lineHeight: "normal" }}
-                >
-                  Log In
-                </button>
+                
+                {errorMessage && <label className="block font-inter text-sm font-normal text-red-500">{errorMessage}</label>}
+                <button type="submit" className={`${styles.sign_in_btn} btn  w-[300px] h-[36.972px] rounded-[10px]  flex justify-center items-center text-white font-inter text-s font-bold`} style={{ lineHeight: "normal" }}>
+                    {isLoading ? 'Loading...' : 'Log In'}
+                  </button>
 
               </form>
 
@@ -110,4 +159,5 @@ export default function page() {
 
     </>
   )
-}
+
+  }
