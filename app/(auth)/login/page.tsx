@@ -13,25 +13,9 @@ export default function page() {
     password: '',
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
+ 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you can add your form submission logic
-    console.log(formData);
-    // Reset form fields after submission if needed
-    setFormData({
 
-      email: '',
-      password: '',
-    });
-  };
   return (
     <>
       <div className={`${styles.login_page}`} >
@@ -45,7 +29,7 @@ export default function page() {
             <div className="form_texts py-10" style={{ width: '300px' }}>
               <h1 className="text-white font-inter text-3xl font-normal mb-3"
                 style={{ lineHeight: "normal" }}> Login</h1>
-              <form onSubmit={handleSubmit} className="w-full max-w-sm mx-auto ">
+              <form  className="w-full max-w-sm mx-auto ">
                 <div className="mb-4">
                   <p className="text-white font-inter text-sm font-semibold " style={{ lineHeight: "normal" }}>Email</p>
                   <input
@@ -53,7 +37,7 @@ export default function page() {
                     id="email"
                     name="email"
                     value={formData.email}
-                    onChange={handleChange}
+                    
                     className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
                     placeholder="enter your email"
                     required
@@ -66,7 +50,7 @@ export default function page() {
                     id="password"
                     name="password"
                     value={formData.password}
-                    onChange={handleChange}
+                   
                     className="shadow appearance-none border rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"
                     placeholder="enter your password"
                     required
